@@ -5,22 +5,92 @@ using UnityEngine;
 public class CharacterScript : MonoBehaviour
 {
     public Rigidbody2D myRigidBody;
+    public SpriteRenderer spriteRender;
+    [SerializeField] private Sprite facingLeft;
+    [SerializeField] private Sprite facingRight;
+    public float moveSpeed;
+    float distance = 50; // only used in teleportation testing
+    public int maxHealth = 20;
+    public HealthBar HealthBar;
+    public int currentHealth;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        currentHealth = maxHealth;
+        HealthBar.SetMaxHealth(maxHealth);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) 
+        // WASD CONTROLS
+
+            // makes sprite jump when space bar hit
+            if (Input.GetKeyDown(KeyCode.Space)) 
+            {
+                myRigidBody.velocity = Vector2.up * 10 * myRigidBody.gravityScale;
+            }
+
+            // makes the sprite move right when D is pressed
+            if (Input.GetKey(KeyCode.A))
+            {
+                spriteRender.sprite = facingLeft;
+                transform.position = transform.position + (Vector3.left * moveSpeed * Time.deltaTime); 
+            }
+
+            // makes the sprite move left when A is pressed
+            if (Input.GetKey(KeyCode.D))
+            {
+                spriteRender.sprite = facingRight;
+                transform.position = transform.position - (Vector3.left * moveSpeed * Time.deltaTime); 
+            }
+
+            // testing take damage when "h" hit
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                takeDamage(2);
+            }
+
+        // TELEPORTATION
+        //eventually should switch exact values to parameters so methods are transferable to planets with different dimensions.
+        //important to note: the main camera dimensions are 200x100 in unity (so "ends" of walkable planet should be 100 from the true planet end)
+
+        // teleports player to x = -200 if player reaches x = 200
+        if (transform.position.x > 200)
+            {
+                transform.position = new Vector3(transform.position.x - 400, transform.position.y, transform.position.z); 
+            }
+
+            // teleports player to x = 200 if player reaches x = -200
+            if (transform.position.x < -200)
+            {
+                transform.position = new Vector3(transform.position.x + 400, transform.position.y, transform.position.z);
+            }
+
+            // testing teleportation with "t" key. will comment out later
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                transform.position = new Vector3(transform.position.x - distance, transform.position.y, transform.position.z);
+            }
+
+    }
+
+    // HEALTH + DAMAGE
+    // uses Sonja's health object methods
+
+    // taking damage when player collides with enemy. theoretically automatically gets called when at start of collision - not working
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
         {
-            myRigidBody.velocity = Vector2.up * 10 * myRigidBody.gravityScale; //makes it so that the character jumps when space bar is hit
-
-
+           takeDamage(2); 
         }
+    }
 
+    void takeDamage(int damage)
+    {
+        currentHealth = currentHealth - damage;
+        HealthBar.SetHealth(currentHealth);
     }
 }
