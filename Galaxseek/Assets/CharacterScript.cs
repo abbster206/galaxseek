@@ -73,16 +73,16 @@ public class CharacterScript : MonoBehaviour
             {
                 transform.position = new Vector3(transform.position.x - distance, transform.position.y, transform.position.z);
             }
-
+     
     }
 
     // HEALTH + DAMAGE
     // uses Sonja's health object methods
 
     // taking damage when player collides with enemy. theoretically automatically gets called when at start of collision - not working
-    void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (other.gameObject.CompareTag("Enemy"))
         {
            takeDamage(2); 
         }
