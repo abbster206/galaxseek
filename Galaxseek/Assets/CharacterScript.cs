@@ -77,16 +77,27 @@ public class CharacterScript : MonoBehaviour
     }
 
     // HEALTH + DAMAGE
-    // uses Sonja's health object methods
 
-    // taking damage when player collides with enemy. theoretically automatically gets called when at start of collision - not working
+    // controls health changes upon collisions with other objects
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("Enemy") && currentHealth > 0)   // takes damage when collides with enemy
         {
            takeDamage(2); 
         }
+
+        if (other.gameObject.CompareTag("Heart") && currentHealth < maxHealth)   // regens when collides with health heart 
+        {
+            regenHealth(2);
+        }
     }
+
+    void regenHealth(int regen)
+    {
+        currentHealth = currentHealth + regen;
+        HealthBar.SetHealth(currentHealth);
+    }
+      
 
     void takeDamage(int damage)
     {
