@@ -15,6 +15,11 @@ public class CameraControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+    }
+
+    void LateUpdate()
+    {
         // camera follows the player (player is always centered in camera screen)
         transform.position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
     }
